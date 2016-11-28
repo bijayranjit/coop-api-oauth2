@@ -13,15 +13,22 @@
                 your eggs!
             </div>
 
-            <a class="btn btn-primary btn-lg" href="{{ path('coop_authorize_start') }}">Authorize</a>
+            {% if user.coopUserId %}
+                <a class="btn btn-primary btn-lg" href="{{ path('count_eggs') }}">Count Eggs</a>
+            {% else %}
+                <a class="btn btn-primary btn-lg" href="{{ path('coop_authorize_start') }}">Authorize</a>
+            {% endif %}
 
-            {#
-            <div class="panel panel-default" style="margin-top: 10px;">
-                <div class="panel-body">
-                    todo - add Facebook share stuff!
-                </div>
+            <br/><br/>
+            <div class="panel panel-default">
+                {% if user.facebookUserId %}
+                    Share how many eggs you've collected today on Facebook!
+                    <a href="{{ path('facebook_share_place') }}" class="btn btn-info">Share</a>
+                {% else %}
+                    Share your status on Facebook!
+                    <a href="{{ path('facebook_authorize_start') }}">Connect with Facebook</a>
+                {% endif %}
             </div>
-            #}
 
         </div>
         <div class="col-md-6">

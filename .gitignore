@@ -1,3 +1,4 @@
+.idea
 /client/composer.phar
 /client/vendor
 /client/data/*.sqlite

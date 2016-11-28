@@ -10,4 +10,22 @@ $http = new Client('http://coop.apps.knpuniversity.com', array(
     )
 ));
 
+// run this code *before* requesting the eggs-collect endpoint
+$request = $http->post('/token', null, array(
+	'client_id'     => 'Kalles lazy CRON job',
+	'client_secret' => '915479378bc88d0dd641172cd5f3e762',
+	'grant_type'    => 'client_credentials',
+));
 
+// make a request to the token url
+$response = $request->send();
+$responseBody = $response->getBody(true);
+$responseArr = json_decode($responseBody, true);
+$accessToken = $responseArr['access_token'];
+
+$request = $http->post('/api/1201/eggs-collect');
+$request->addHeader('Authorization', 'Bearer '.$accessToken);
+$response = $request->send();
+echo $response->getBody();
+
+echo "\n\n";

@@ -24,7 +24,20 @@ class FacebookOAuthController extends BaseController
      */
     public function redirectToAuthorization()
     {
-        die('Todo: Redirect to Facebook');
+		$facebook = $this->createFacebook();
+
+		$redirectUrl = $this->generateUrl(
+			'facebook_authorize_redirect',
+			array(),
+			true
+		);
+
+		$url = $facebook->getLoginUrl(array(
+			'redirect_uri' => $redirectUrl,
+			'scope' => array('public_profile', 'email', 'user_friends')
+		));
+
+		return $this->redirect($url);
     }
 
     /**
@@ -39,8 +52,33 @@ class FacebookOAuthController extends BaseController
      */
     public function receiveAuthorizationCode(Application $app, Request $request)
     {
-        die('Todo: Handle after Facebook redirects to us');
+
+		$facebook = $this->createFacebook();
+		$userId = $facebook->getUser();
+
+		if (!$userId) {
+			return $this->render('failed_authorization.twig', array(
+				'response' => $request->query->all()
+			));
+		}
+
+		$user = $this->getLoggedInUser();
+		$user->facebookUserId = $userId;
+		$this->saveUser($user);
+
+		return $this->redirect($this->generateUrl('home'));
     }
+
+	private function createFacebook()
+	{
+		$config = array(
+			'appId' => '1831521120452454',
+			'secret' => '1ae8caed6ed9a7471262c67c62e4ca74',
+			'allowSignedRequest' => false
+		);
+
+		return new \Facebook($config);
+	}
 
     /**
      * Posts your current status to your Facebook wall then redirects to
